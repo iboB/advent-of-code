@@ -1,7 +1,5 @@
-input = File.read('input.txt').split("\n\n").map { |entry|
-  entry.split(/ |\n/)
-}
-
+# "If I had more time, I would have written a shorter letter."
+input = File.read('input.txt').split("\n\n").map { |entry| entry.split(/ |\n/) }
 puts [
   [/^byr:/, /^iyr:/, /^eyr:/, /^hgt:/, /^hcl:/, /^ecl:/, /^pid:/],
   [
@@ -14,4 +12,3 @@ puts [
     /^pid:\d{9}$/
   ]
 ].map { |rules| input.filter { |data| rules.all? { |r| data.any? { |kv| kv =~ r } } }.length }
-
