@@ -119,9 +119,8 @@ struct Room {
     friend bool operator==(const Room& a, const Room& b) { return a.data == b.data; }
 };
 
-Room room;
-
-void readInput() {
+Room readInput() {
+    Room room;
     ifstream fin(INPUT_PATH"/input.txt");
 
     while (!fin.eof()) {
@@ -132,11 +131,12 @@ void readInput() {
     }
 
     room.init();
+    return room;
 }
 
 template <typename Q>
-void solve(Q q) {
-    Room sol = room, tmp;
+void solve(Room sol, Q q) {
+    Room tmp;
     while (true) {
         sol.iteration(tmp, q);
         if (sol == tmp) break;
@@ -147,8 +147,8 @@ void solve(Q q) {
 }
 
 int main() {
-    readInput();
+    auto room = readInput();
 
-    solve(&Room::query_a);
-    solve(&Room::query_b);
+    solve(room, &Room::query_a);
+    solve(room, &Room::query_b);
 }
