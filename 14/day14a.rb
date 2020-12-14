@@ -2,7 +2,7 @@ mask_or = 0
 mask_and = 0
 mem = {}
 
-File.readlines('input.example').each do |l|
+File.readlines('input.txt').each do |l|
   if l =~ /^mask = (.+)$/
     mask_or = 0
     mask_and = 0
