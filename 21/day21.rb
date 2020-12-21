@@ -1,49 +1,30 @@
-input = File.readlines('input.txt').map { |line|
-  line.strip!.chop!
-  a, b = line.split('(contains ')
-  [a.split(' '), b.split(', ')]
+foods = File.readlines('input.txt').map { |line|
+  i, a = line.strip.chop.split('(contains ')
+  [i.split(' '), a.split(', ')]
 }
 
-all = {}
-hash = {}
+products = foods.map{ |f| f[0] }.flatten.uniq
 
-input.each do |elem|
-  elem[1].each do |a|
-    if !hash.key?(a)
-      hash[a] = elem[0]
-    else
-      hash[a] &= elem[0]
-    end
-  end
-  elem[0].each do |i|
-    all[i] = true
+a_maybes = Hash.new(products)
+
+foods.each do |f|
+  f[1].each do |a|
+    a_maybes[a] &= f[0]
   end
 end
 
-alergs = {}
-hash.each do |k, v|
-  v.each do |i|
-    alergs[i] = true
-  end
+allergens = {}
+while !a_maybes.empty?
+  a_maybes.find { |k, v| v.length == 1 }.tap { |a, i|
+    i = i[0]
+    allergens[a] = i
+    a_maybes.delete(a)
+    a_maybes.each { |_, is| is.delete(i) }
+  }
 end
 
-noals = (all.keys - alergs.keys)
+# a
+p foods.map { |food| (food[0] - allergens.values).length }.sum
 
-p input.each.map { |elem| (elem[0] & noals).length }.sum
-
-solve = []
-
-while true
-  a, i = hash.find { |k, v| v.length == 1 }
-  i = i[0]
-  solve << [a, i]
-  hash.delete(a)
-
-  hash.each do |k, v|
-    v.delete(i)
-  end
-
-  break if hash.length == 0
-end
-
-puts solve.sort { |a, b| a[0] <=> b[0] }.map { |x| x[1] }.join(',')
+# b
+p allergens.to_a.sort { |a, b| a[0] <=> b[0] }.map { |_, i| i }.join(',')
