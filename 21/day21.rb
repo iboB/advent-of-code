@@ -1,9 +1,8 @@
 foods = File.readlines('input.txt').map { |line|
-  i, a = line.strip.chop.split('(contains ')
-  [i.split(' '), a.split(', ')]
+  line.split('contains').map { |part| part.scan(/\w+/) }
 }
 
-products = foods.map{ |f| f[0] }.flatten.uniq
+products = foods.map { |f| f[0] }.flatten.uniq
 
 a_maybes = Hash.new(products)
 
