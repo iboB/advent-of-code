@@ -4,6 +4,8 @@
 #include <string>
 #include <cassert>
 
+#include "../cpp/timer.hpp"
+
 using namespace std;
 
 struct Vec
@@ -147,6 +149,7 @@ void solve(Room sol, Q q) {
 }
 
 int main() {
+    timer t;
     auto room = readInput();
 
     solve(room, &Room::query_a);
