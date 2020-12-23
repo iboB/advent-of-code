@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(aoc2020)
 
+set(CMAKE_CXX_STANDARD 17)
+
 macro(add_day d)
     get_filename_component(dir ${CMAKE_CURRENT_SOURCE_DIR}/../${d} ABSOLUTE)
     add_executable(day${d} "${dir}/day${d}.cpp")
@@ -9,3 +11,4 @@ macro(add_day d)
 endmacro()
 
 add_day(11)
+add_day(23)
