@@ -9,3 +9,5 @@ macro(add_day d)
     add_executable(day${d} "${dir}/day${d}.cpp")
     target_compile_definitions(day${d} PRIVATE -DINPUT_PATH="${dir}")
 endmacro()
+
+add_day(15)
