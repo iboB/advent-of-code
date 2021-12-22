@@ -1,4 +1,4 @@
-# pretty slow (26 secs on the puzzle input)
+# pretty slow (8 secs on the puzzle input)
 # can be optimized a lot with allocation management
 # no idea for algorithmic level optimizations (yet)
 class Range
@@ -9,8 +9,13 @@ class Range
 end
 
 def i3(a, b)
-  i = a.zip(b).each.map { _1 & _2 }.compact
-  i.length == 3 ? i : nil
+  ret = []
+  3.times do |n|
+    i = a[n] & b[n]
+    return nil if !i
+    ret << i
+  end
+  ret
 end
 
 def vol(a)
