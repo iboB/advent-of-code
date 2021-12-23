@@ -4,6 +4,7 @@
 #include <string>
 #include <cstdint>
 #include <cassert>
+#include <climits>
 
 #include "../cpp/timer.hpp"
 
