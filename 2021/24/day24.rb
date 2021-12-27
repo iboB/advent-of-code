@@ -1,130 +1,172 @@
-class FalseClass; def to_i; 0 end end
-class TrueClass; def to_i; 1 end end
+# A terrible brute-force which I wrote for 30 minutes and ran for 20 minutes
+# Maybe I'll spend more time on this if I have time
+# So far I have no better ideas
 
 class Val
-  def initialize(r)
+  def initialize(r = [])
     @range = r
   end
-
-  attr :range, :str
-
-  def addi(i)
-    return self if i == 0
-    Val.new @range.map { _1 + i }
+  def self.[](*r)
+    return new(r)
   end
-
-  alias_method :iadd, :addi
-
-  def addv(v)
-    Val.new @range.product(v.range).map { _1 + _2 }.uniq
+  def reset
+    @range = [0]
   end
-
-  def muli(i)
-    return self if i == 1
-    return 0 if i == 0
-    Val.new @range.map { _1 * i }
-  end
-
-  alias_method :imul, :muli
-
-  def mulv(v)
-    Val.new @range.product(v.range).map { _1 * _2 }.uniq
-  end
-
-  def divi(i)
-    return self if i == 1
-    nr = @range.map { _1 / i }.uniq
-    return nr[0] if nr.length == 1
-    Val.new nr
-  end
-
-  def idiv(i)
-    return 0 if i == 0
-    nr = @range.select { _1 != 0 }.map { i / _1 }.uniq
-    return nr[0] if nr.length == 1
-    Val.new nr
-  end
-
-  def divv(v)
-    @range.product(v.range.select { _1 != 0 }).map { _1 / _2 }.uniq
-    return nr[0] if nr.length == 1
-    Val.new nr
-  end
-
-  def modi(i)
-    nr = @range.select { _1 >= 0 }.map { _1 % i }.uniq
-    return nr[0] if nr.length == 1
-    Val.new nr
-  end
-
-  def imod(i)
-    nr = @range.select { _1 > 0 }.map { i % _1 }.uniq
-    return nr[0] if nr.length == 1
-    Val.new nr
-  end
-
-  def modv(v)
-    @range.select { _1 >= 0 }.product(v.range.select { _1 > 0 }).map { _1 % _2 }.uniq
-    return nr[0] if nr.length == 1
-    Val.new nr
-  end
-
-  def eqli(i)
-    return 0 if !@range.include?(i)
-    Val.new [0, 1]
-  end
-
-  alias_method :ieql, :eqli
-
-  def eqlv(v)
-    return 0 if (@range & v.range).empty?
-    Val.new [0, 1]
-  end
-
-  def perform(op, arg)
-    return send(op + 'i', arg) if Integer === arg
-    send(op + 'v', arg)
+  attr_accessor :range
+  def inspect
+    "(#{@range.min}; #{@range.max}) \# #{@range.length}"
   end
 end
 
-class Integer
-  def perform(op, arg)
-    return arg.send('i' + op, self) if !(Integer === arg)
-    case op
-    when 'add' then self + arg
-    when 'mul' then self * arg
-    when 'div' then self / arg
-    when 'mod' then self % arg
-    when 'eql' then (self == arg).to_i
+Regs = 4.times.map { Val[0] }
+
+class Inp
+  def initialize(a, i)
+    @a = Regs[a.ord - ?w.ord]
+    @i = i
+    reset
+  end
+  def execute
+    @a.range = @val
+  end
+  def reset
+    @val = (1..9).to_a
+  end
+  attr_accessor :val
+  def log
+    puts "inp #{@i}"
+  end
+  def inspect
+    @val.inspect
+  end
+end
+
+module Op
+  def initialize(line, a, b)
+    @line = line
+    @a = Regs[a.ord - ?w.ord]
+    @b = b =~ /\d/ ? Val[b.to_i] : Regs[b.ord - ?w.ord]
+  end
+  def execute
+    @a.range = do_exec(@a.range, @b.range)
+  end
+  def log
+    puts
+    puts @line
+    puts Regs.map.with_index { "#{(_2 + ?w.ord).chr}: #{_1.inspect}" }
+  end
+end
+
+class Add
+  include Op
+  def do_exec(ra, rb)
+    ret = []
+    ra.each do |a|
+      rb.each do |b|
+        ret << a+b
+      end
     end
+    ret.uniq
   end
 end
 
-regs = [0]*4 # wxyz
+class Mul
+  include Op
+  def do_exec(ra, rb)
+    return ra if rb == [1]
+    return rb if ra == [1]
+    return [0] if ra == [0] || rb == [0]
+    ret = []
+    ra.each do |a|
+      rb.each do |b|
+        ret << a*b
+      end
+    end
+    ret.uniq
+  end
+end
 
-lim = 0
-ii = 0
-input = File.readlines('input.txt').map { |l|
-  op, a, b = l.strip.split
+class Div
+  include Op
+  def do_exec(ra, rb)
+    return ra if rb == [1]
+    return [0] if ra == [0]
+    ret = []
+    rb.each do |b|
+      next if b == 0
+      ra.each do |a|
+        ret << a/b
+      end
+    end
+    ret.uniq
+  end
+end
 
-  a = a.ord - ?w.ord
+class Mod
+  include Op
+  def do_exec(ra, rb)
+    return ra if rb == [1]
+    return [0] if ra == [0]
+    posb = rb.select { _1 > 0 }
+    ret = []
+    ra.select { _1 >= 0 }.each do |a|
+      posb.each do |b|
+        ret << a%b
+      end
+    end
+    ret.uniq
+  end
+end
+
+class Eql
+  include Op
+  def do_exec(ra, rb)
+    return [0] if (ra & rb).empty?
+    return [1] if ra.length == 1 && rb.length == 1 && ra[0] == rb[0]
+    return [0, 1]
+  end
+end
+
+$pass = []
+$ops = []
+
+File.readlines('input.txt').each do |l|
+  op, a, b = l.strip!.split
 
   if op == 'inp'
-    regs[a] = Val.new (1..9).to_a
-    ii += 1
+    inp = Inp.new a, $pass.length
+    $pass << inp
+    $ops << inp
   else
-    va = regs[a]
-    vb = b =~ /\d/ ? b.to_i : regs[b.ord - ?w.ord]
-
-    regs[a] = va.perform(op, vb)
+    $ops << eval(op.capitalize).new("#{$ops.length}: #{l}", a, b)
   end
+end
 
-  lim += 1
-  # break if lim > 140
-}
+def test_run
+  Regs.each(&:reset)
+  $ops.each(&:execute)
+  Regs[-1].range.include?(0)
+end
 
-z = regs[-1]
-puts z.range.length
-puts z.range.min
-puts z.range.max
+def bf(i)
+  p $pass if i == 3
+  $order.each do |d|
+    $pass[i].val = [d]
+    next if !test_run
+    return true if i == 13
+    return true if bf(i+1)
+  end
+  $pass[i].reset
+  false
+end
 
+# a
+$order = 9.downto(1).to_a
+bf(0)
+p $pass.map(&:val).flatten.join
+
+# b
+$pass.each(&:reset)
+$order = 1.upto(9).to_a
+bf(0)
+p $pass.map(&:val).flatten.join
