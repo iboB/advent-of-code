@@ -1,5 +1,6 @@
 icrates, moves = File.read('input.txt').split("\n\n")
 
+# relies on trailing spaces for input until longest column!
 crates_a = icrates.lines.reverse.drop(1).map { |line|
   1.step(line.length, 4).map { line[_1] }
 }.transpose.map { |crate|
