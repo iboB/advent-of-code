@@ -4,8 +4,10 @@ input = File.read('input.txt').strip.split("\n\n").map { |monkey|
     items: s.scan(/\d+/).map(&:to_i),
     op: op.split(':')[1].strip.gsub(/new|old/, 'val'),
     div: t.split(/ /).last.to_i,
-    on_true: tt.split(/ /).last.to_i,
-    on_false: tf.split(/ /).last.to_i,
+    on: {
+      true => tt.split(/ /).last.to_i,
+      false => tf.split(/ /).last.to_i,
+    },
     num: 0
   }
 }
@@ -15,17 +17,13 @@ alld = input.map { _1[:div] }.inject(:*)
 10_000.times do
   input.each do |m|
     items = m[:items]
+    m[:num] += items.length
     m[:items] = []
     items.each do |val|
-      m[:num] += 1
       eval(m[:op])
-      val %= alld
       # val = val / 3
-      if val % m[:div] == 0
-        input[m[:on_true]][:items] << val
-      else
-        input[m[:on_false]][:items] << val
-      end
+      val %= alld
+      input[m[:on][val % m[:div] == 0]][:items] << val
     end
   end
 end
