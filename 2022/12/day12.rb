@@ -1,52 +1,52 @@
 require 'matrix'
-start = nil
-finish = nil
+start_pos = nil
+end_pos = nil
 Input = File.readlines('input.txt').map.with_index { |l, y|
   l.strip.split(//).map.with_index { |e, x|
-    if e == ?S
-      start = Vector[x, y]
+    h = if e == ?S
+      start_pos = Vector[x, y]
       0
     elsif e == ?E
-      finish = Vector[x, y]
+      end_pos = Vector[x, y]
       25
     else
       e.ord - ?a.ord
     end
+    {h: h, best: 1_000_000}
   }
 }
 
 H = Input.length
 W = Input[0].length
 
-@best = Hash.new(100000)
-@best[start.hash] = 0
-
-Dirs = [
-  Vector[1, 0],
-  Vector[-1, 0],
-  Vector[0, 1],
-  Vector[0, -1],
-]
-
-def solve(cur, len)
-  ch = Input[cur[1]][cur[0]]
-  len += 1
-  Dirs.each do |d|
-    nex = cur + d
-    next if nex[0] < 0 || nex[0] >= W || nex[1] < 0 || nex[1] >= H
-    nexh = Input[nex[1]][nex[0]]
-    next if (nexh - ch).abs > 1
-    next if @best[nex.hash] <= len
-    @best[nex.hash] = len
-    if nexh == 25
-      puts "#{nex} @ #{len+1}"
-      next
-    end
-    solve(nex, len)
-  end
+def at(vec)
+  Input[vec[1]][vec[0]]
 end
 
-solve(start, 0)
+Dirs = [Vector[1, 0], Vector[-1, 0], Vector[0, 1], Vector[0, -1]]
 
-
+# bfs from end to start
+at(end_pos)[:best] = 0
+bfs = [end_pos]
+best_0 = nil
+while !bfs.empty? do
+  cur_pos = bfs.shift
+  cur = at(cur_pos)
+  len = cur[:best] + 1
+  Dirs.each do |dir|
+    next_pos = cur_pos + dir
+    next if next_pos[0] < 0 || next_pos[0] >= W || next_pos[1] < 0 || next_pos[1] >= H
+    nex = at(next_pos)
+    next if nex[:best] <= len
+    next if cur[:h] > nex[:h] && cur[:h] - nex[:h] > 1
+    best_0 = len if !best_0 && nex[:h] == 0
+    if next_pos == start_pos
+      p len # a
+      p best_0 # b
+      exit 0
+    end
+    nex[:best] = len
+    bfs << next_pos
+  end
+end
 
