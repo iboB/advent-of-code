@@ -1,35 +1,21 @@
-def interleave(a, b)
-  if a.length >= b.length
-    a.zip(b).to_a
-  else
-    b.zip(a).map(&:reverse)
-  end
-end
-
 def cmp(a, b)
-  return -1 if !a
-  return 1 if !b
-  if Integer === a
-    if Integer === b
-      return a <=> b
-    else
-      a = [a]
-      l = cmp(a, b)
-      return l if l != 0
-    end
+  case [a, b]
+  in [nil, _] then -1
+  in [_, nil] then 1
+  in [Integer, Integer] then a <=> b
+  in [Integer, Array] then cmp([a], b)
+  in [Array, Integer] then cmp(a, [b])
   else
-    if Integer === b
-      b = [b]
-      l = cmp(a, b)
-      return l if l != 0
+    if a.length >= b.length
+      a.zip(b)
     else
-      interleave(a, b).each { |aa, bb|
-        l = cmp(aa, bb)
-        return l if l != 0
-      }
-    end
+      b.zip(a).map(&:reverse)
+    end.each { |aa, bb|
+      l = cmp(aa, bb)
+      return l if l != 0
+    }
+    0
   end
-  return 0
 end
 
 # a
