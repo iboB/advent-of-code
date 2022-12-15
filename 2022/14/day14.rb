@@ -1,6 +1,6 @@
 # A simulation solution
 # I'm sure there's a projection-based one, which doesn't simulate every grain,
-# but for now I wond invest in such
+# but for now I wont invest in such
 
 require 'matrix'
 require 'set'
