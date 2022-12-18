@@ -3,7 +3,7 @@ require 'matrix'
 sides = Hash.new(0)
 
 input = File.readlines('input.txt').map { |l|
-  cube = Vector[*l.strip.split(',').map(&:to_i)]
+  cube = Vector[*l.strip.split(',').map { _1.to_i + 1 }] # add one so as to leave zero empty
   sides[[cube, :r]] += 1
   sides[[cube, :d]] += 1
   sides[[cube, :i]] += 1
@@ -14,21 +14,44 @@ input = File.readlines('input.txt').map { |l|
 }
 
 # a
-sides.delete_if { _2 == 2 }
-p sides.length
+p sides.values.count(1)
 
 # b
-# size = input.transpose.map(&:max)
-# grid = Array.new(size[2]+1) { Array.new(size[1] + 1) { Array.new(size[0] + 1, 0) } }
+SIZE = input.transpose.map { _1.max + 2 } # add 2 so as to leave max empty
 
-# incubes = Hash.new(0)
+class Mut # mutable value ( sometimes ruby doesn't help us :( )
+  def initialize(v)
+    @v = v
+  end
+  attr_accessor :v
+end
 
-# size[2].times do |z|
-#   size[1].times do |y|
-#     cnt = 0
-#     size[0].times do |x|
-#       grid[z][y][x] = cnt
-#       cnt += 1 if sides[[Vector[x,y,z], :r]]
-#     end
-#   end
-# end
+@grid = Array.new(SIZE[2]) { Array.new(SIZE[1]) { Array.new(SIZE[0]) { Mut.new(false) } } }
+input.each { |v| @grid[v[2]][v[1]][v[0]] = nil } # clear set
+
+def at(v)
+  return nil if v.any? { _1 < 0 }
+  return nil if v.zip(SIZE).any? { _1 >= _2 }
+  return @grid[v[2]][v[1]][v[0]]
+end
+
+# floodfill
+area = 0
+Dirs = [[1, 0, 0], [0, 1, 0], [0, 0, 1], [-1, 0, 0], [0, -1, 0], [0, 0, -1]].map { Vector[*_1] }
+bfs = [Vector[0, 0, 0]]
+while !bfs.empty? do
+  cur = bfs.shift
+  Dirs.each do |d|
+    pos = cur + d
+    val = at(pos)
+    next if !val || val.v
+    val.v = true
+    # count neighbouring edges
+    area += 1 if sides[[pos, :r]] == 1
+    area += 1 if sides[[pos, :d]] == 1
+    area += 1 if sides[[pos, :i]] == 1
+    bfs << pos
+  end
+end
+
+p 2 * area
