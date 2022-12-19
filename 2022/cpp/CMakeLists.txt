@@ -10,4 +10,4 @@ macro(add_day d)
     target_compile_definitions(day${d} PRIVATE -DINPUT_PATH="${dir}")
 endmacro()
 
-# add_day(12)
+add_day(19)

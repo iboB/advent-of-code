@@ -1,20 +1,7 @@
 require 'matrix'
-class Array
-  def dup_add(*pairs)
-    pairs.each do |i, e|
-      return nil if self[i] + e < 0
-    end
-    ret = self.dup
-    pairs.each do |i, e|
-      ret[i] += e
-    end
-    ret
-  end
-end
-
 
 def solve(days, cost)
-  max_r = Vector[
+  max_b = Vector[
     [cost[0], cost[1], cost[2], cost[4]].max,
     cost[3],
     cost[5],
@@ -37,38 +24,42 @@ def solve(days, cost)
 
   timeline = [[Vector[1, 0, 0, 0], Vector[0, 0, 0, 0], nil]]
   1.upto(days) do |d|
-    timeline = timeline.map { |t|
-      rob = t[0]
-      res = t[1]
-      hodl = t[2]
-
-
-
+    timeline = timeline.map { |bot, res, hodl|
       if hodl
         nres = res - price[hodl]
         if nres.any? { _1 < 0 }
-          [[rob, res + rob, hodl]]
+          [[bot, res + bot, hodl]]
         else
-          [[rob + buy[hodl], nres + rob, nil]]
+          [[bot + buy[hodl], nres + bot, nil]]
         end
       else
         can_hodl = [
           true,
           true,
-          rob[1] != 0,
-          rob[2] != 0
+          bot[1] != 0,
+          bot[2] != 0
         ]
         vars = 4.times.select {
-          rob[_1] < max_r[_1] && can_hodl[_1]
+          bot[_1] < max_b[_1] && can_hodl[_1]
         }
-        vars.map { |r|
-          nres = res - price[r]
-          next [rob, res + rob, r] if nres.any? { _1 < 0 }
-          [rob + buy[r], nres + rob, nil]
-        }.compact
+        vars.map { |b|
+          nres = res - price[b]
+          next [bot, res + bot, b] if nres.any? { _1 < 0 }
+          [bot + buy[b], nres + bot, nil]
+        }
       end
     }.flatten(1).uniq
-    p timeline.length
+    p [d, timeline.size]
+    # grouped = timeline.group_by { |bot, res, hodl| [bot, hodl] }.values
+    # timeline = grouped.map { |group|
+    #   next group if group.size == 1
+    #   group.map.with_index { |g, i|
+    #     next nil if !(i+1...group.size).map { |j|
+    #       break nil if (g[1] - group[j][1]).all? { _1 <= 0 }
+    #     }
+    #     g
+    #   }.compact
+    # }.flatten(1)
   end
   timeline.map { _1[1][-1] }.max
 end
@@ -81,4 +72,4 @@ end
 p File.read('input.txt').strip.split("\n").join.split("Blueprint")[1..1].map { |l|
   p l
   solve(24, l.split(':')[1].scan(/\d+/).map(&:to_i))
-}.map.with_index { _1 * (_2 + 1) }.sum
+}
