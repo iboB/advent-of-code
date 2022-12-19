@@ -1,9 +1,3 @@
-# this brute-force search was too slow for ruby
-# but worked fine when rewritten in C++
-# :(
-# I don't have time to look for a better solution now
-# will revisit in the future
-
 require 'matrix'
 
 def solve(days, cost)
@@ -55,17 +49,23 @@ def solve(days, cost)
         }
       end
     }.flatten(1).uniq
-    p [d, timeline.size]
+
+    # fuck
+    # I only thought of the following two lines after I rewrote the solution in C++
+    # and submitted my answers.
+    # They make it oreders of magnitude faster and even this ruby solution is viable
+    # Of course it makes sense that one should buy geode as soon as possible!
+    # :(
+    max_g = timeline.map { _1[1][-1] }.max
+    timeline = timeline.select { _1[1][-1] == max_g  }
   end
   timeline.map { _1[1][-1] }.max
 end
 
-# p File.read('input.txt').strip.split("\n").join.split("Blueprint")[1..].map { |l|
-#   p l
-#   solve(24, l.split(':')[1].scan(/\d+/).map(&:to_i))
-# }.map.with_index { _1 * (_2 + 1) }.sum
+p File.read('input.txt').strip.split("\n").join.split("Blueprint")[1..].map { |l|
+  solve(24, l.split(':')[1].scan(/\d+/).map(&:to_i))
+}.map.with_index { _1 * (_2 + 1) }.sum
 
-p File.read('input.txt').strip.split("\n").join.split("Blueprint")[1..1].map { |l|
-  p l
-  solve(20, l.split(':')[1].scan(/\d+/).map(&:to_i))
-}
+p File.read('input.txt').strip.split("\n").join.split("Blueprint")[1..3].map { |l|
+  solve(32, l.split(':')[1].scan(/\d+/).map(&:to_i))
+}.inject(:*)

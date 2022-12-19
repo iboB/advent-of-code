@@ -1,3 +1,10 @@
+// I thought of an optimization only after I submitted
+// Without it, this took about 20 seconds (99% in b)
+// With it
+// a takes 170 ms
+// b takes 30 ms
+// :)
+
 #include <iostream>
 #include <fstream>
 #include <vector>
@@ -85,6 +92,7 @@ int solve(int days, const Blueprint& bp) {
 
     std::vector<Record> prevDay = {{Vector{1, 0, 0, 0}, Vector{0, 0, 0, 0}, -1}};
     std::vector<Record> nextDay;
+    int maxG = 0;
     for (int d = 1; d <= days; ++d) {
         nextDay.clear();
         for (const auto& r : prevDay) {
@@ -115,16 +123,23 @@ int solve(int days, const Blueprint& bp) {
         std::sort(nextDay.begin(), nextDay.end());
         auto ne = std::unique(nextDay.begin(), nextDay.end());
         nextDay.erase(ne, nextDay.end());
+
+        maxG = 0;
+        for (auto& r : nextDay) {
+            if (r.resources[3] > maxG) {
+                maxG = r.resources[3];
+            }
+        }
+
+        ne = std::remove_if(nextDay.begin(), nextDay.end(), [maxG](const Record& r) {
+            return r.resources[3] != maxG;
+        });
+        nextDay.erase(ne, nextDay.end());
+
         prevDay.swap(nextDay);
-        cout << d << ": " << prevDay.size() << "\n";
+        //cout << d << ": " << prevDay.size() << "\n";
     }
 
-    int maxG = 0;
-    for (auto& r : prevDay) {
-        if (r.resources[3] > maxG) {
-            maxG = r.resources[3];
-        }
-    }
     return maxG;
 }
 
