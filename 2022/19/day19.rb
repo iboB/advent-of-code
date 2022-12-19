@@ -1,3 +1,9 @@
+# this brute-force search was too slow for ruby
+# but worked fine when rewritten in C++
+# :(
+# I don't have time to look for a better solution now
+# will revisit in the future
+
 require 'matrix'
 
 def solve(days, cost)
@@ -50,16 +56,6 @@ def solve(days, cost)
       end
     }.flatten(1).uniq
     p [d, timeline.size]
-    # grouped = timeline.group_by { |bot, res, hodl| [bot, hodl] }.values
-    # timeline = grouped.map { |group|
-    #   next group if group.size == 1
-    #   group.map.with_index { |g, i|
-    #     next nil if !(i+1...group.size).map { |j|
-    #       break nil if (g[1] - group[j][1]).all? { _1 <= 0 }
-    #     }
-    #     g
-    #   }.compact
-    # }.flatten(1)
   end
   timeline.map { _1[1][-1] }.max
 end
@@ -71,5 +67,5 @@ end
 
 p File.read('input.txt').strip.split("\n").join.split("Blueprint")[1..1].map { |l|
   p l
-  solve(24, l.split(':')[1].scan(/\d+/).map(&:to_i))
+  solve(20, l.split(':')[1].scan(/\d+/).map(&:to_i))
 }
