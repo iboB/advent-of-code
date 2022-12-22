@@ -16,7 +16,6 @@ dir = 0
 Dirs = [Vector[1, 0], Vector[0, 1], Vector[-1, 0], Vector[0, -1]]
 Turns = {'R' => 1, 'L' => -1}
 
-# path.each
 path.each do |i|
   if String === i
     dir += Turns[i]
