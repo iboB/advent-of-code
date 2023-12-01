@@ -11,7 +11,7 @@ def findz(n)
 end
 
 # a
-p fincz(5)
+p findz(5)
 
 # b
 p findz(6)
