@@ -1,3 +1,9 @@
+Dirs = [
+  [-1,-1], [-1, 0], [-1, 1],
+  [ 0,-1],          [ 0, 1],
+  [ 1,-1], [ 1, 0], [ 1, 1],
+]
+
 input = File.readlines('input.txt').map { |l|
   l.strip
 }
