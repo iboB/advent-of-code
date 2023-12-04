@@ -138,8 +138,6 @@ void bfs_solve(const game_info& info, const game_state initial_state) {
 
             for (auto ne : next_elevators) {
                 auto add_state = [&](game_state next_state) -> bool {
-                    if (visited.find(next_state) != visited.end()) return false;
-                    visited.insert(next_state);
                     if (!info.floor_valid(next_state, cur_elevator)) return false;
                     if (!info.floor_valid(next_state, ne)) return false;
 
@@ -147,6 +145,10 @@ void bfs_solve(const game_info& info, const game_state initial_state) {
                         std::cout << "Found solution in " << step << " steps\n";
                         return true;
                     }
+
+                    if (visited.find(next_state) != visited.end()) return false;
+                    visited.insert(next_state);
+
                     next_states.push_back(next_state);
                     return false;
                 };
