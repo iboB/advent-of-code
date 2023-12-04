@@ -16,3 +16,4 @@ macro(add_day d)
 endmacro()
 
 add_day(08)
+add_day(11)
