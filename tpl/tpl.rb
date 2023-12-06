@@ -5,7 +5,7 @@ Dirs = [
 ]
 
 input = File.readlines('input.txt').map { |l|
-  l.strip
+  l.strip.scan(/\d+/).map(&:to_i)
 }
 
 input = File.read('input.txt').strip.split(',').map(&:to_i)
