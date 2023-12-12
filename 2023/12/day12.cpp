@@ -95,10 +95,11 @@ int main() {
         }
     }
 
-    timer t;
-
     // a
-    std::cout << solve(inputs) << '\n';
+    {
+        timer t;
+        std::cout << solve(inputs) << '\n';
+    }
 
     // b
     for (auto& in : inputs) {
@@ -110,7 +111,10 @@ int main() {
             in.damaged.insert(in.damaged.end(), orig_damaged.begin(), orig_damaged.end());
         }
     }
-    std::cout << solve(inputs) << '\n';
+    {
+        timer t;
+        std::cout << solve(inputs) << '\n';
+    }
 
     return 0;
 }
