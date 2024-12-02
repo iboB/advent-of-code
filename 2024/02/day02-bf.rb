@@ -7,11 +7,8 @@ def good_sans_1(r) = r.each_index.any? { |i| good(r.dup.tap { _1.delete_at(i) })
 reps = File.readlines('input.txt').map { _1.split.map(&:to_i) }
 reps += reps.map(&:reverse)
 
-res = reps.group_by { good(_1) }
-
 # a
-p res[true].size
+p reps.count { good(_1) }
 
-
-# b
-p res[true].size + res[false].count { good_sans_1(_1) }
+# b (no point in checking a here, since if it's good, it's also good without one element)
+p reps.count { good_sans_1(_1) }
