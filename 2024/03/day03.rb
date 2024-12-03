@@ -1,16 +1,13 @@
 input = File.read('input.txt').strip
 
+def calc(str) = str.scan(/mul\((\d{1,3}),(\d{1,3})\)/).sum { |a, b| a.to_i * b.to_i }
+
 # a
-p input.scan(/mul\((\d{1,3}),(\d{1,3})\)/).map { |a, b| a.to_i * b.to_i }.sum
+p calc(input)
 
 # b
-input = input.scan(/(mul\(\d{1,3},\d{1,3}\))|(do\(\))|(don't\(\))/).map(&:compact).flatten
+input = 'do()' + input
 
-accept = 1
-p input.map { |cmd|
-  if cmd.start_with?('do')
-    accept = cmd == 'do()' ? 1 : 0
-    next 0
-  end
-  accept * cmd.scan(/\d+/).map(&:to_i).inject(&:*)
+p input.split("don't()").map {
+  calc _1.split('do()')[1..].join
 }.sum
