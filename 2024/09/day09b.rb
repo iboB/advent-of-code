@@ -6,19 +6,11 @@ tail = []
 
 until input.empty?
   id, n = input.pop
-  if !id
-    tail << [nil, n]
-    next
-  end
-
-  i = input.index { !_1 && _2 >= n }
-  if i
+  if id && (i = input.index { !_1 && _2 >= n })
     input[i..i] = [[id, n], [nil, input[i][1] - n]]
-    tail << [nil, n]
-    next
+    id = nil
   end
-
   tail << [id, n]
 end
 
-p tail.reverse.flat_map { [_1] * _2 }.map.with_index { (_1 || 0)  * _2 }.sum
+p tail.reverse.flat_map { [_1||0] * _2 }.map.with_index { _1*_2 }.sum
