@@ -23,6 +23,7 @@ p map.select { _2 == 0 }.map { |start, _|
       }
     }
   }
+
   #    a               b
   [layer.length, layer.sum { _2 }]
 }.transpose.map(&:sum)
