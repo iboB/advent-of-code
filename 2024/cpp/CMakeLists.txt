@@ -14,3 +14,5 @@ macro(add_day d)
     target_compile_definitions(day${d} PRIVATE -DINPUT_PATH="${dir}")
     target_link_libraries(day${d} PRIVATE itlib::itlib)
 endmacro()
+
+add_day(16)
