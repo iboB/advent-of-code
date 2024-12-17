@@ -16,14 +16,14 @@ end
 while ip < inst.size
   code, operand = inst[ip]
   case code
-  when 0 then @a /= 1 << cmb(operand)
+  when 0 then @a >>= cmb(operand)
   when 1 then @b ^= operand
   when 2 then @b = cmb(operand) & 7
   when 3 then ip = operand/2 - 1 if @a != 0
   when 4 then @b ^= @c
   when 5 then out << (cmb(operand) & 7)
-  when 6 then @b = @a / (1 << cmb(operand))
-  when 7 then @c = @a / (1 << cmb(operand))
+  when 6 then @b = @a >> cmb(operand)
+  when 7 then @c = @a >> cmb(operand)
   end
   ip += 1
 end

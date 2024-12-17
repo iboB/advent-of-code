@@ -1,3 +1,7 @@
+// failed bruto force attempt
+// left this running while I do the actual solution to B
+// it turned out to be much easier than I thought
+
 #include "../cpp/timer.hpp"
 #include <fstream>
 #include <iostream>
