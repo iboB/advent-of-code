@@ -10,8 +10,8 @@ Dirs = [
    1 + -1i,  1 +  0i,  1 +  1i,
 ]
 
-input = File.readlines('input.txt').map { |l|
+input = File.readlines(?i).map { |l|
   l.strip.scan(/\d+/).map(&:to_i)
 }
 
-input = File.read('input.txt').strip.split(',').map(&:to_i)
+input = File.read(?i).strip.split(',').map(&:to_i)
