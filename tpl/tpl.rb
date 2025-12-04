@@ -14,4 +14,4 @@ input = File.readlines(?i).map { |l|
   l.strip.scan(/\d+/).map(&:to_i)
 }
 
-input = File.read(?i).strip.split(',').map(&:to_i)
+input = File.read(?i).strip.split(?,).map(&:to_i)
