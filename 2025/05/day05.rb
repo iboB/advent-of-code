@@ -4,15 +4,14 @@ rs, ids = File.read(?i).strip.split("\n\n").then {[
 ]}
 
 # a
-p ids.select { |i| rs.any? { (_1.._2) === i } }.size
+p ids.count { |i| rs.any? { (_1.._2) === i } }
 
 # b
 # sweep line:
 # store depth in d, collect starts with depth 0->1 and ends with depth 1->0
 d = 0
 p rs.flat_map { [[_1, 1], [_2 + 1, -1]] }.sort.select {
-  d += _2
-  d == 1 && _2 == 1 || d == 0 && _2 == -1
+  [d, d += _2].sort == [0, 1]
 }.each_slice(2).map {
   _2[0] - _1[0]
 }.sum
