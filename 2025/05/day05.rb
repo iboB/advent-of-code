@@ -12,6 +12,6 @@ p ids.count { |i| rs.any? { (_1.._2) === i } }
 d = 0
 p rs.flat_map { [[_1, 1], [_2 + 1, -1]] }.sort.select {
   [d, d += _2].sort == [0, 1]
-}.each_slice(2).map {
+}.each_slice(2).sum {
   _2[0] - _1[0]
-}.sum
+}
