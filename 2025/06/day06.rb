@@ -4,6 +4,7 @@ lines = File.readlines(?i)
 p lines.map(&:split).transpose.sum { eval _1[...-1].join(_1[-1]) }
 
 # b
+# for thie to work, make sure trailing space in the input are not stripped!
 ops = lines[-1].scan(/\S\s+/).map(&:chop)
 
 p lines[...-1].map { |line|
