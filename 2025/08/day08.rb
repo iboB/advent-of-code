@@ -1,7 +1,7 @@
 cs = File.readlines(?i).map { _1.split(?,).map(&:to_i) }
 
 js = cs.each_with_index.to_a.combination(2).map { |(c0, i0), (c1, i1)|
-  [i0, i1, c0.zip(c1).map { (_1 - _2).abs ** 2 }.sum]
+  [i0, i1, c0.zip(c1).sum { (_1 - _2) ** 2 }]
 }.sort_by(&:last)
 
 groups = [nil] * cs.size
