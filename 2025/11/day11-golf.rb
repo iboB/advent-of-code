@@ -4,6 +4,6 @@ def dfs(memo, node, tgt)
   return 1 if node == tgt
   memo[node] = ($graph[node]||[]).sum { dfs memo, _1, tgt }
 end
-puts [[:you, :out], [:svr, :fft, :dac, :out]].map {
-  _1.each_cons(2).reverse_each.inject({}) { |m, (n, t)| {n => dfs(m, n, t)} }.values[0]
+puts [[:you, :out], [:svr, :fft, :dac, :out]].map { |path|
+  path.each_cons(2).map { dfs({}, _1, _2) }.reduce(:*)
 }
