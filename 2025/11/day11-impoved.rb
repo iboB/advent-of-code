@@ -1,3 +1,4 @@
+# improved: not faster, but cleaner (b directly reuses code for a)
 $graph = File.readlines(?i).map { |l|
   k, v = l.split(?:)
   [k.to_sym, v.strip.split.map(&:to_sym)]
